@@ -1,0 +1,51 @@
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:2.10-alpine
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+
+  app1:
+    image: php:8.4.12-cli-alpine
+    container_name: app1
+    volumes:
+      - ./src1:/app
+    working_dir: /app
+    command: php -S 0.0.0.0:8000
+    labels:
+      caddy: app1.localhost
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+      caddy.tls: internal
+
+  app2:
+    image: php:8.4.12-cli-alpine
+    container_name: app2
+    volumes:
+      - ./src2:/app
+    working_dir: /app
+    command: php -S 0.0.0.0:8000
+    labels:
+      caddy: app2.localhost
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+      caddy.tls: internal
+
+  app3:
+    image: php:8.4.12-fpm-alpine
+    container_name: app3
+    volumes:
+      - ./src3:/app
+    working_dir: /app
+    expose:
+      - 9000
+    labels:
+      caddy: app3.localhost
+      caddy.php_fastcgi: "{{upstreams 9000}}"
+      caddy.root: "/app"
+      caddy.file_server: ""
+      caddy.tls: internal
+
