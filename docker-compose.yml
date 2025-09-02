@@ -9,6 +9,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./caddy/data:/data
       - ./caddy/config:/config
+    environment:
+      - CADDY_INGRESS_NETWORKS=caddy
+    networks:
+      - caddy
 
   app1:
     image: php:8.4.12-cli-alpine
@@ -21,6 +25,8 @@ services:
       caddy: app1.localhost
       caddy.reverse_proxy: "{{upstreams 8000}}"
       caddy.tls: internal
+    networks:
+      - caddy
 
   app2:
     build: ./src2
@@ -33,6 +39,9 @@ services:
       caddy: app2.localhost
       caddy.reverse_proxy: "{{upstreams 8000}}"
       caddy.tls: internal
+    networks:
+      - caddy
+      - default
 
   app3:
     image: php:8.4.12-fpm-alpine
@@ -48,9 +57,15 @@ services:
       caddy.root: "/app"
       caddy.file_server: ""
       caddy.tls: internal
+    networks:
+      - caddy
 
   db:
     image: mysql:9.3
     container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: example
+
+networks:
+  caddy:
+    name: caddy
