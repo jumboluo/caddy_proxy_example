@@ -5,15 +5,14 @@ $password = "example";
 $dbname = "mysql";
 
 
-
 // 创建连接
 $conn = new \mysqli($servername, $username, $password, $dbname);
 
 // 检查连接
 if ($conn->connect_error) {
-    die("连接失败: " . $conn->connect_error);
+    die("Connect failed: " . $conn->connect_error);
 }
-echo "连接成功<br>";
+echo "Conected<br>";
 
 // 执行查询
 $sql = "SELECT Host, User, password_last_changed FROM user";
@@ -29,7 +28,7 @@ if ($result->num_rows > 0) {
         echo str_pad($row["Host"], 10). "\t" . str_pad($row["User"], 20). "\t" . $row["password_last_changed"]. "\n";
     }
 } else {
-    echo "0 结果";
+    echo "Record not found";
 }
 
 // 关闭连接
