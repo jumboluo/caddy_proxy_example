@@ -23,7 +23,7 @@ services:
       caddy.tls: internal
 
   app2:
-    image: php:8.4.12-cli-alpine
+    build: ./src2
     container_name: app2
     volumes:
       - ./src2:/app
@@ -49,3 +49,8 @@ services:
       caddy.file_server: ""
       caddy.tls: internal
 
+  db:
+    image: mysql:9.3
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: example
