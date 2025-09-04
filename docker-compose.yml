@@ -41,7 +41,7 @@ services:
       caddy.tls: internal
     networks:
       - caddy
-      - default
+      - withdb
 
   app3:
     image: php:8.4.12-fpm-alpine
@@ -65,7 +65,10 @@ services:
     container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: example
+    networks:
+      - withdb
 
 networks:
+  withdb:
   caddy:
     name: caddy
